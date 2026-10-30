@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samsung TV Remote Listener</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .status-card {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            max-width: 80%;
+        }
+        .dot {
+            height: 15px;
+            width: 15px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <div class="status-card">
+        <h2><span class="dot"></span> شاشة سامسونج متصلة بـ Firebase</h2>
+        <p>في انتظار الأوامر من تطبيق الهاتف...</p>
+        <h3 id="last-command" style="color: #ff9800;">آخر أمر: لا يوجد بعد</h3>
+    </div>
+
+    <script>
+        // إعدادات مشروع Firebase الخاص بك
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZmiq25pE01-bR-TGNXcg5mjZI8al7qRQ",
+            authDomain: "tvremotecontrolnew-c37a9.firebaseapp.com",
+            databaseURL: "https://tvremotecontrolnew-c37a9-default-rtdb.firebaseio.com",
+            projectId: "tvremotecontrolnew-c37a9",
+            storageBucket: "tvremotecontrolnew-c37a9.appspot.com",
+            messagingSenderId: "478465491474",
+            appId: "1:478465491474:android:d8060516e795b58fa14ecb"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // الاستماع للتغييرات في tv_command
+        const commandRef = database.ref('tv_command');
+
+        commandRef.on('value', (snapshot) => {
+            const query = snapshot.val();
+            if (query) {
+                document.getElementById('last-command').innerText = "آخر أمر: " + query;
+                const youtubeUrl = "https://www.youtube.com/results?search_query=" + encodeURIComponent(query);
+                setTimeout(() => {
+                    window.location.href = youtubeUrl;
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
